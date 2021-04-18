@@ -151,6 +151,9 @@ class segment_tree
 	
 
 	public:
+	// Default Constructor
+	segment_tree() = delete;
+	// Parameterized Constructor
 	segment_tree(iter begin, iter end)
 	{
 		size =  find_size(begin, end, typename iterator_traits<iter>::iterator_category());
@@ -160,20 +163,39 @@ class segment_tree
 		}
 		n = n*2;
 	
-		tree =  new int[n];
+		tree =  new T[n];
 		build_tree(begin,tree, 0 , size,  0);
 	}
+	// Copy Constructor
+	segment_tree(const segment_tree& other)
+	{
+		size = other.size();
+		n = 1;
+		while(n < size){
+			n = n*2;
+		}
+		n = n*2;
+
+		tree = new T[n];
+		for(int i=0;i<n;++i)
+		{
+			tree[i] = other.tree[i];
+		}
+	}
+	// Destructor
 	~segment_tree()
 	{
 		delete [] tree;
 	}
+	
+	
 	T query(int query_start,int query_end)
 	{
-		return query_util(this->tree,0,size-1,query_start,query_end,0);
+		return query_util(tree,0,size-1,query_start,query_end,0);
 	}
 	void update(int index,int value)
 	{
-		return update_util(this->tree,0,size-1,index,value,0);
+		return update_util(tree,0,size-1,index,value,0);
 	}
 	T operator[](int index)
 	{
@@ -186,6 +208,14 @@ class segment_tree
 			cout << *(tree+i) <<"  "; 
 		}
 		cout << "\n";
+	}
+	int size()
+	{
+		return size;
+	}
+	bool empty()
+	{
+		return size==0;
 	}
 };
 

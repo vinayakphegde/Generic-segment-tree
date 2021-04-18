@@ -3,7 +3,6 @@
 using namespace std;
 
 #include "segment_tree.hpp"
-using namespace operation;
 
 int main()
 {
