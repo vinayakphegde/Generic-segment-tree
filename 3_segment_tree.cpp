@@ -94,14 +94,7 @@ int segment_tree<T,pred_t,iter>::find_size(iter begin,iter end, random_access_it
 
 template<typename T,typename pred_t,typename iter>
 int segment_tree<T,pred_t,iter>::find_size(iter begin,iter end, bidirectional_iterator_tag){
-	int i=0;
-	while(begin != end)
-	{
-		i++;
-		begin++;
-	}
-	return i;
-
+	return find_size(begin, end, std::input_iterator_tag{});
 }
 
 template<typename T,typename pred_t,typename iter>
@@ -123,12 +116,7 @@ T segment_tree<T,pred_t,iter>::find_ele(iter begin,int index, random_access_iter
 
 template<typename T,typename pred_t,typename iter>
 T segment_tree<T,pred_t,iter>::find_ele(iter begin,int index, bidirectional_iterator_tag){
-	while(index > 0)
-	{
-		begin++;
-		index--;
-	}
-	return *begin;
+	return find_ele(begin, index, std::input_iterator_tag{});
 }
 
 template<typename T,typename pred_t,typename iter>
@@ -152,7 +140,7 @@ segment_tree<T,pred_t,iter>::segment_tree(iter begin,iter end)
 		n = n*2;
 	}
 	n = n*2;
-	cout << n <<"\n";
+	// cout << n <<"\n";
 	tree =  new int[n];
 	build_tree(begin,tree, 0 , size,  0);
 }
@@ -242,19 +230,24 @@ T segment_tree<T,pred_t,iter>::operator[](int index)
 	return query(index,index);
 }
 
-int main()
-{
-	int n;
-	n=8;
- 	list<int> v{1,2,3,4,5,6,7,8};
-	int sum=0;
-	segment_tree<int,gcdd<int>, list<int>::iterator> tree1(v.begin(),v.end());
-	tree1.disp();
-	cout<< tree1.query(0,5) << "\n";
-	tree1.disp();
-	tree1.update(1,4);
-	tree1.disp();
-	cout<<"end\n";
-	// cout << tree1[1] << endl;
-	return 0;	
-}
+// int main()
+// {
+// 	// int n;
+// 	// n=8;
+//  	// list<int> v{1,2,3,4,5,6,7,8};
+// 	// int sum=0;
+// 	// segment_tree<int,gcdd<int>, list<int>::iterator> tree1(v.begin(),v.end());
+// 	// tree1.disp();
+// 	// cout<< tree1.query(0,5) << "\n";
+// 	// tree1.disp();
+// 	// tree1.update(1,4);
+// 	// tree1.disp();
+// 	// cout<<"end\n";
+// 	// // cout << tree1[1] << endl;
+
+// 	vector<int> a = {2,3,5,6,4,8,2,1,4,6};
+// 	segment_tree<int, summation<int>,vector<int>::iterator> tree(a.begin()+2,a.begin()+a.size()-2);
+// 	tree.disp();
+// 	cout<<tree.query(1,3)<<"\n";
+// 	return 0;	
+// }
