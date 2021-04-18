@@ -7,6 +7,7 @@ template<typename T>
 class minimum
 {
 	public:
+	static const int n_element = INT_MAX;
 	T operator() (T lhs,T rhs) const {
 		return (lhs<rhs) ? lhs : rhs;
 	}
@@ -16,6 +17,7 @@ template<typename T>
 class maximum
 {
 	public:
+	static const int n_element = INT_MIN;
 	T operator()(const T lhs,const T rhs) const 
 	{
 		return (lhs>rhs) ? lhs : rhs;
@@ -26,9 +28,21 @@ template<typename T>
 class summation
 {
 	public:
+	static const int n_element = 0;
 	T operator()(const T lhs,const T rhs) const 
 	{
 		return lhs+rhs;
+	}
+};
+
+template<typename T>
+class gcdd
+{
+	public:
+	static const int n_element = 0;
+	T operator()(const T lhs,const T rhs) const 
+	{
+		return __gcd(lhs,rhs);
 	}
 };
 
@@ -186,7 +200,7 @@ T segment_tree<T,pred_t,iter>::query_util(T *tree,int start,int end,int query_st
 	//cout << start <<"\t"<< end <<"\t"<< query_start<<"\t" << query_end << "\t" << np << "\n";
 	if(start>query_end or end<query_start)
 	{
-		return 0;
+		return pred_t().n_element;
 	}
 	if(query_start<=start and query_end>=end)
 	{
@@ -234,16 +248,13 @@ int main()
 	n=8;
  	list<int> v{1,2,3,4,5,6,7,8};
 	int sum=0;
-	segment_tree<int,summation<int>, list<int>::iterator> tree1(v.begin(),v.end());
+	segment_tree<int,gcdd<int>, list<int>::iterator> tree1(v.begin(),v.end());
 	tree1.disp();
 	cout<< tree1.query(0,5) << "\n";
 	tree1.disp();
 	tree1.update(1,4);
 	tree1.disp();
 	cout<<"end\n";
-
-
-
 	// cout << tree1[1] << endl;
 	return 0;	
 }
