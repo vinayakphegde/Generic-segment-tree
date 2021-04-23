@@ -40,6 +40,10 @@ namespace seg_tree{
         {
             return ptr_ - rhs.ptr_;
         }
+        int operator+(const Iterator &rhs)
+        {
+            return ptr_ + rhs.ptr_;
+        }
     };
 }
 

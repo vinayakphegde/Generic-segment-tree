@@ -18,6 +18,7 @@ class segment_tree
 {
 	private:
 	vector<T*> tree;
+	vector<T> __tree;
 	int n;
 	int size_;
 
@@ -127,9 +128,10 @@ class segment_tree
 		n = n*2;
 
 		tree.resize(n);
+		__tree.resize(n,*get_neutral_ele());
 		for(int i=0;i<n;++i)
 		{
-			tree[i] = new T(*get_neutral_ele());
+			tree[i] = &__tree[i];
 		}
 		build_tree(begin, end, 0, size_, 0);
 	}
