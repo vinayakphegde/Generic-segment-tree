@@ -8,58 +8,16 @@ using namespace std;
 
 #define mid(l,r) (l+(r-l)/2)
 
-namespace operation 
-{
-	template<typename T>
-	class min
-	{
-		public:
-		static const int n_element = INT_MAX;
-		T operator() (T lhs,T rhs) const {
-			return (lhs<rhs) ? lhs : rhs;
-		}
-	};
+#include "iterator.hpp"
+using namespace seg_tree;
 
-	template<typename T>
-	class max
-	{
-		public:
-		static const int n_element = INT_MIN;
-		T operator()(const T lhs,const T rhs) const 
-		{
-			return (lhs>rhs) ? lhs : rhs;
-		}
-	};
-
-	template<typename T>
-	class sum
-	{
-		public:
-		static const int n_element = 0;
-		T operator()(const T lhs,const T rhs) const 
-		{
-			return lhs+rhs;
-		}
-	};
-
-	template<typename T>
-	class gcd
-	{
-		public:
-		static const int n_element = 0;
-		T operator()(const T lhs,const T rhs) const 
-		{
-			return __gcd(lhs,rhs);
-		}
-	};
-
-}
+#include "operation.hpp"
 
 template<typename T,typename pred_t>
 class segment_tree
 {
 	private:
-	vector<T> tree;
+	vector<T*> tree;
 	int n;
 	int size_;
 
@@ -98,7 +56,7 @@ class segment_tree
 	{
 		if(end - start == 1)
 		{
-			tree[np] = find_ele(begin_, start, typename iterator_traits<iter>::iterator_category());
+			*tree[np] = find_ele(begin_, start, typename iterator_traits<iter>::iterator_category());
 			// tree[np] = find_ele(begin_,end_);
 			return;
 		}
@@ -106,10 +64,10 @@ class segment_tree
 		build_tree(begin_, end_, start,mid,2*np+1);
 		build_tree(begin_, end_, mid,end,2*np+2);
 
-		tree[np]=pred_t()(tree[2*np+1],tree[2*np+2]);
+		tree[np] = pred_t()(tree[2*np+1],tree[2*np+2]);
 	}
 	
-	T query_util(int start,int end,int query_start,int query_end,int np) const
+	T* query_util(int start,int end,int query_start,int query_end,int np) const
 	{
 		if(start>query_end or end<query_start)
 		{
@@ -120,8 +78,8 @@ class segment_tree
 			return tree[np];
 		}
 		int mid=mid(start,end);
-		int left=query_util(start,mid,query_start,query_end,2*np+1);
-		int right=query_util(mid+1,end,query_start,query_end,2*np+2);
+		T* left=query_util(start,mid,query_start,query_end,2*np+1);
+		T* right=query_util(mid+1,end,query_start,query_end,2*np+2);
 		return pred_t()(left,right);
 	}
 	
@@ -132,7 +90,7 @@ class segment_tree
 		
 		if(start==end)
 		{
-			tree[np]=value;
+			*tree[np]=value;
 			return;
 		}
 		int mid=mid(start,end);
@@ -148,7 +106,7 @@ class segment_tree
 		tree[np]=pred_t()(tree[2*np+1],tree[2*np+2]);
 	}
 	
-	int get_neutral_ele()
+	T* get_neutral_ele()
 	{
 		return pred_t().n_element;
 	}
@@ -161,19 +119,23 @@ class segment_tree
 	template<typename iter>
 	segment_tree(iter begin, iter end)
 	{
-		size_ =  (int)distance(begin, end);
+		size_ = (int)distance(begin, end);
 		n = 1;
 		while(n < size_){
 			n = n*2;
 		}
 		n = n*2;
 
-		tree.resize(n,get_neutral_ele());
+		tree.resize(n);
+		for(int i=0;i<n;++i)
+		{
+			tree[i] = new T(*get_neutral_ele());
+		}
 		build_tree(begin, end, 0, size_, 0);
 	}
 	
 	// Copy Constructor - TODO
-	segment_tree(const segment_tree<T,pred_t>& other): size_(other.size_), n(other.n)
+	segment_tree(Iterator<T> begin, Iterator<T> end)
 	{
 		// DO SOMETHING THAT WORKS
 	}
@@ -185,23 +147,20 @@ class segment_tree
 	}
 	
 	
-	T query(int query_start,int query_end) const
+	Iterator<T> query(int query_start,int query_end) const
 	{
-		return query_util(0,size_-1,query_start,query_end,0);
+		return Iterator<T>(query_util(0,size_-1,query_start,query_end,0));
 	}
 	void update(int index,int value)
 	{
 		return update_util(0,size_-1,index,value,0);
 	}
-	T operator[](int index) const
-	{
-		return query(index,index);
-	}
+
 	void display()
 	{
 		for(int i=0;i<n;i++)
 		{
-			cout << tree[i] <<"  "; 
+			cout << *tree[i] <<"  "; 
 		}
 		cout << "\n";
 	}
@@ -209,9 +168,17 @@ class segment_tree
 	{
 		return size_;
 	}
-	bool empty()
+	bool empty() const
 	{
 		return size==0;
+	}
+	Iterator<T> begin()
+	{
+		return Iterator<T>(tree.begin());
+	}
+	Iterator<T> end()
+	{
+		return Iterator<T>(tree.end());
 	}
 };
 
