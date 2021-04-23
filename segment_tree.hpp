@@ -1,7 +1,7 @@
 #ifndef SEGMENT_TREE_H
 #define SEGMENT_TREE_H
 
-#include <bits/stdc++.h>
+#include <iostream>
 #include <iterator>
 #include <typeinfo>
 using namespace std;
@@ -55,7 +55,7 @@ namespace operation
 
 }
 
-template<typename T,typename pred_t,typename iter>
+template<typename T,typename pred_t>
 class segment_tree
 {
 	private:
@@ -63,50 +63,52 @@ class segment_tree
 	int n;
 	int size_;
 
-	// DO NOT USE THIS VARIABLE ANYWHERE except in get_ele()
-	iter begin_;
-	iter end_;
+	// template<typename iter>
+	// T find_ele(iter &begin_, iter &end_)
+	// {
+	// 	if(begin_!=end_)
+	// 		return *begin_++;
 
-	int find_size(iter begin, iter end, input_iterator_tag) const
+	// 	cout<<"WARNING: Returning out of range!";
+	// 	return *end_;
+	// }
+	template<typename iter>
+	T find_ele(iter begin, int index, input_iterator_tag)
 	{
-		int i=0;
-		while(begin != end)
+		while(index > 0)
 		{
-			i++;
 			begin++;
+			index--;
 		}
-		return i;
+		return *begin;
 	}
-	int find_size(iter begin, iter end, bidirectional_iterator_tag ) const
+	template<typename iter>
+	T find_ele(iter begin, int index, bidirectional_iterator_tag )
 	{
-		return find_size(begin, end, std::input_iterator_tag{});
+		return find_ele(begin, index, std::input_iterator_tag{});
 	}
-	int find_size(iter begin, iter end, random_access_iterator_tag) const
+	template<typename iter>
+	T find_ele(iter begin, int index, random_access_iterator_tag)
 	{
-		return end - begin;
+		return *(begin + index);
 	}
-	
-	T get_ele()
-	{
-		if(begin_!=end_)
-			return *begin_++;
 
-		cout<<"WARNING: Returning out of range!";
-		return *end_;
-	}
-	void build_tree(int start,int end, int np)
+	template<typename iter>
+	void build_tree(iter &begin_, iter &end_, int start,int end, int np)
 	{
 		if(end - start == 1)
 		{
-			tree[np] = get_ele();
+			tree[np] = find_ele(begin_, start, typename iterator_traits<iter>::iterator_category());
+			// tree[np] = find_ele(begin_,end_);
 			return;
 		}
 		int mid=mid(start,end);
-		build_tree(start,mid,2*np+1);
-		build_tree(mid,end,2*np+2);
+		build_tree(begin_, end_, start,mid,2*np+1);
+		build_tree(begin_, end_, mid,end,2*np+2);
 
 		tree[np]=pred_t()(tree[2*np+1],tree[2*np+2]);
 	}
+	
 	T query_util(int start,int end,int query_start,int query_end,int np) const
 	{
 		if(start>query_end or end<query_start)
@@ -122,6 +124,7 @@ class segment_tree
 		int right=query_util(mid+1,end,query_start,query_end,2*np+2);
 		return pred_t()(left,right);
 	}
+	
 	void update_util(int start,int end,int index,int value,int np)
 	{
 		if(index<start or index>end)
@@ -145,27 +148,36 @@ class segment_tree
 		tree[np]=pred_t()(tree[2*np+1],tree[2*np+2]);
 	}
 	
+	int get_neutral_ele()
+	{
+		return pred_t().n_element;
+	}
 
 	public:
 	// Default Constructor
 	segment_tree() = delete;
+
 	// Parameterized Constructor
-	segment_tree(iter begin, iter end): begin_(begin), end_(end)
+	template<typename iter>
+	segment_tree(iter begin, iter end)
 	{
-		size_ =  find_size(begin, end, typename iterator_traits<iter>::iterator_category());
+		size_ =  (int)distance(begin, end);
 		n = 1;
-		while(n <= size_){
+		while(n < size_){
 			n = n*2;
 		}
-	
-		tree.resize(n,0);
-		build_tree(0, size_, 0);
+		n = n*2;
+
+		tree.resize(n,get_neutral_ele());
+		build_tree(begin, end, 0, size_, 0);
 	}
+	
 	// Copy Constructor - TODO
-	segment_tree(const segment_tree<T,pred_t,iter>& other): size_(other.size_), n(other.n)
+	segment_tree(const segment_tree<T,pred_t>& other): size_(other.size_), n(other.n)
 	{
 		// DO SOMETHING THAT WORKS
 	}
+	
 	// Destructor
 	~segment_tree()
 	{
