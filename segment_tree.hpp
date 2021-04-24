@@ -55,7 +55,7 @@ class segment_tree
 	template<typename iter>
 	void build_tree(iter &begin_, iter &end_, int start,int end, int np)
 	{
-		if(end - start == 1)
+		if(end == start)
 		{
 			*tree[np] = find_ele(begin_, start, typename iterator_traits<iter>::iterator_category());
 			// tree[np] = find_ele(begin_,end_);
@@ -63,7 +63,7 @@ class segment_tree
 		}
 		int mid=mid(start,end);
 		build_tree(begin_, end_, start,mid,2*np+1);
-		build_tree(begin_, end_, mid,end,2*np+2);
+		build_tree(begin_, end_, mid+1,end,2*np+2);
 
 		tree[np] = pred_t()(tree[2*np+1],tree[2*np+2]);
 	}
@@ -133,7 +133,7 @@ class segment_tree
 		{
 			tree[i] = &__tree[i];
 		}
-		build_tree(begin, end, 0, size_, 0);
+		build_tree(begin, end, 0, size_-1, 0);
 	}
 	
 	// Copy Constructor - TODO
@@ -224,7 +224,7 @@ class segment_tree<T, operation::sum<T> >
 	template<typename iter>
 	void build_tree(iter &begin_, iter &end_, int start,int end, int np)
 	{
-		if(end - start == 1)
+		if(end == start)
 		{
 			tree[np] = find_ele(begin_, start, typename iterator_traits<iter>::iterator_category());
 			// tree[np] = find_ele(begin_,end_);
@@ -232,7 +232,7 @@ class segment_tree<T, operation::sum<T> >
 		}
 		int mid=mid(start,end);
 		build_tree(begin_, end_, start,mid,2*np+1);
-		build_tree(begin_, end_, mid,end,2*np+2);
+		build_tree(begin_, end_, mid+1,end,2*np+2);
 
 		tree[np]=operation::sum<T>()(tree[2*np+1],tree[2*np+2]);
 	}
@@ -298,7 +298,7 @@ class segment_tree<T, operation::sum<T> >
 		n = n*2;
 
 		tree.resize(n,get_neutral_ele());
-		build_tree(begin, end, 0, size_, 0);
+		build_tree(begin, end, 0, size_-1, 0);
 	}
 	
 	// Copy Constructor - TODO
