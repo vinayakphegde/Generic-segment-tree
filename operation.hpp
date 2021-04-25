@@ -1,13 +1,14 @@
 namespace operation 
 {
-	template<typename T>
+	template<typename T1>
 	class min
 	{
 		public:
-		static T* n_element;
-		T* operator() (T* lhs, T* rhs) const 
+		static T1* n_element;
+		template<typename T2>
+		T2 operator() (T2 lhs, T2 rhs) const 
 		{
-			return (*lhs<*rhs) ? lhs : rhs;
+			return (lhs.value<rhs.value) ? lhs : rhs;
 		}
 	};
 
