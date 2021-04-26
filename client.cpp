@@ -11,14 +11,25 @@ int main()
 	// segment_tree<int, operation::sum<int> > tree(a.begin()+2,a.begin()+a.size()-2);
 	// tree.display();
 	// cout<<tree.query(1,3)<<"\n";
-	#if 0
+	#if 1
 	cout<<"\n"<<"SUM: "<<"\n";
 	segment_tree<int, operation::sum<int> > tree(a.begin(),a.end());
-	tree.updateRange(1,4,10);
+	tree.updateRange(1,3,10);
+	// tree.display();
+	// tree.assignRange(1,3,10);
+	tree.display();
 	for(int i=0;i<a.size();++i)
 	{
 		cout<<tree.query(0,i)<<"\n";
 	}
+	tree.display();
+	tree.assignRange(1,3,10);
+	for(int i=0;i<a.size();++i)
+	{
+		cout<<tree.query(0,i)<<"\n";
+	}
+	tree.display();
+
 	#endif
 
 	#if 1
@@ -33,10 +44,32 @@ int main()
 	tree2.display();
 	segment_tree<int, operation::min<int> >::iterator it = tree2.begin();
 	cout<<*it<<"\n";
-	// tree2.updateRange(0,3,10);
-
-	cout<<*tree2.query(1,3)<<"\n";
-
+	tree2.updateRange(0,1,10);
+	cout << "after range update\n" ;
+	// cout<<*tree2.query(1,3)<<"\n";
+	for(int i=0;i<a.size();++i)
+	{
+		segment_tree<int, operation::min<int> >::iterator it = tree2.query(0,i);
+		cout<<*it<<"\n";
+		// cout<< *tree2.query(0,i)<<"\n";
+	}
+	tree2.display();
+	it = tree2.begin();
+	cout<<*it<<"\n";
+	it++;
+	tree2.updateRange(0,1,100);
+	cout<<*it<<"\n";
+	tree2.display();
+	cout<<"after assign range\n";
+	tree2.assignRange(1,3,100);
+	tree2.updateRange(0,2,200);
+	tree2.display();
+	for(int i=0;i<a.size();++i)
+	{
+		segment_tree<int, operation::min<int> >::iterator it = tree2.query(0,i);
+		cout<<*it<<"\n";
+		// cout<< *tree2.query(0,i)<<"\n";
+	}
 	cout<<"\n"<<"MAX: "<<"\n";
 	segment_tree<int, operation::max<int> > tree3(a.begin(),a.end());
 	for(int i=0;i<a.size();++i)
@@ -45,9 +78,9 @@ int main()
 	}
 	#endif
 
-	it = find(tree2.begin(), tree2.end(), 6);
+	it = find(tree2.begin(), tree2.end(), 19);
 	cout<<"Found: "<<*it<<"\n";
-	cout<< (find(tree2.begin(), tree2.end(), 6) == tree2.end()) <<"\n";
+	cout<< (find(tree2.begin(), tree2.end(), 19) == tree2.end()) <<"\n";
 	
 	return 0;	
 }

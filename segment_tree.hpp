@@ -15,10 +15,12 @@ class segment_tree
 {
 	private:
 	struct tree_node{
-	T value;
-	int index;
+		T value;
+		int index;
 	};
-	vector<tree_node> tree;
+	mutable vector<T> lazy;
+	mutable vector<tree_node> tree;
+	mutable vector<bool> update_assign;// True if update and false if assign 
 	int n;
 	int size_;
 
@@ -55,6 +57,8 @@ class segment_tree
 	template<typename iter>
 	void build_tree(iter &begin_, iter &end_, int start,int end, int np)
 	{
+		
+
 		if(end == start)
 		{
 			tree[np].value = find_ele(begin_, start, typename iterator_traits<iter>::iterator_category());
@@ -68,8 +72,36 @@ class segment_tree
 		tree[np] = pred_t()(tree[2*np+1],tree[2*np+2]);
 	}
 	
-	tree_node query_util(int start,int end,int query_start,int query_end,int np) const
+	tree_node query_util(int start,int end,int query_start,int query_end,int np) 
 	{
+		if (lazy[np] != 0)
+    	{ 
+			if(update_assign[np] == true){
+
+				tree[np].value += lazy[np];
+				if (start != end)
+				{
+					lazy[np*2+1] += lazy[np];
+					update_assign[2*np+1] =  true;
+					lazy[np*2+2] += lazy[np];
+					update_assign[2*np+1] =  true;
+				}
+	
+				lazy[np] = 0;
+			}
+			else{
+				tree[np].value = lazy[np];
+				if (start != end)
+				{
+					lazy[np*2+1] = lazy[np];
+					update_assign[2*np+1] =  false;
+					lazy[np*2+2] = lazy[np];
+					update_assign[2*np+1] =  false;
+				}
+				update_assign[np] =  true;
+				lazy[np] = 0;
+			}
+  		}
 		if(start>query_end or end<query_start)
 		{
 			return {pred_t().n_element, -1}; 
@@ -91,7 +123,7 @@ class segment_tree
 		
 		if(start==end)
 		{
-			tree[np].value = value;
+			tree[np].value += value;
 			return;
 		}
 		int mid=mid(start,end);
@@ -108,28 +140,31 @@ class segment_tree
 	}
 	
 	void updateRange_util(int start,int end,int query_start,int query_end,int value,int np){
-		// if (lazy[np] != 0)
-    	// {
-	    //     *tree[np] += lazy[np];
-		// 	// __tree[np] = *tree[np];
-        // 	if (start != end)
-    	// 	{
-        //     	lazy[np*2 + 1]   += lazy[np];
-        //     	lazy[np*2 + 2]   += lazy[np];
-  	    // 	}
-        // 	lazy[np] = 0;
-    	// }
+		if (lazy[np] != 0)
+		{
+		    tree[np].value += lazy[np];
+			if (start != end)
+			{
+		    	lazy[np*2 + 1]  += lazy[np];
+				update_assign[2*np+1] =  true;
+		    	lazy[np*2 + 2]  += +lazy[np];
+				update_assign[2*np+2] =  true;
+			}
+			update_assign[np] =  true;
+			lazy[np] = 0;
+		}
 		if(start>query_end or end<query_start)
 			return;
 		if (start>=query_start && end<=query_end)
     	{
-        	tree[np] += value;
-			// __tree[np] = *tree[np];
-        	// if (start != end)
-        	// {
-            // 	lazy[np*2 + 1]   += value;
-            // 	lazy[np*2 + 2]   += value;
-        	// }
+        	tree[np].value += value;
+        	if (start != end)
+        	{
+            	lazy[np*2 + 1]  += value;
+				update_assign[2*np+1] =  true;
+            	lazy[np*2 + 2]  += value;
+				update_assign[2*np+2] =  true;
+        	}
         	return;
     	}
 		int mid=mid(start,end);
@@ -139,6 +174,40 @@ class segment_tree
 	}
 
 
+	void assignRange_util(int start,int end,int query_start,int query_end,int value,int np){
+		if (lazy[np] != 0)
+		{
+		    tree[np].value = lazy[np];
+			if (start != end)
+			{
+		    	lazy[np*2 + 1]  = lazy[np];
+				update_assign[2*np+1] =  false;
+		    	lazy[np*2 + 2]  = lazy[np];
+				update_assign[2*np+2] =  false;
+			}
+			update_assign[np] =  true;
+			lazy[np] = 0;
+		}
+		if(start>query_end or end<query_start)
+			return;
+		if (start>=query_start && end<=query_end)
+    	{
+        	tree[np].value = value;
+        	if (start != end)
+        	{
+            	lazy[np*2 + 1]  = value;
+				update_assign[2*np+1] =  false;
+            	lazy[np*2 + 2]  = value;
+				update_assign[2*np+2] =  false;
+        	}
+        	return;
+    	}
+		int mid=mid(start,end);
+		assignRange_util(start,mid,query_start,query_end,value,2*np+1);
+		assignRange_util(mid+1,end,query_start,query_end,value,2*np+2);
+   		tree[np]=pred_t()(tree[2*np+1],tree[2*np+2]);	
+	}
+
 	T get_neutral_ele()
 	{
 		return pred_t().n_element;
@@ -146,6 +215,37 @@ class segment_tree
 
 	T get_util(int start,int end,int index,int np) const
 	{
+		if (lazy[np] != 0)
+    	{
+			if(update_assign[np] == true){
+
+				tree[np].value += lazy[np];
+				if (start != end)
+				{
+					lazy[np*2+1] += lazy[np];
+					update_assign[np*2+1] = true;
+					lazy[np*2+2] += lazy[np];
+					update_assign[np*2+2] = true;
+				}
+	
+				lazy[np] = 0;
+			}
+			else{
+				tree[np].value = lazy[np];
+				if (start != end)
+				{
+					lazy[np*2+1] = lazy[np];
+					update_assign[np*2+1] = false;
+					lazy[np*2+2] = lazy[np];
+					update_assign[np*2+2] = false;
+				}
+	
+				lazy[np] = 0;
+				update_assign[np] = true;
+			}
+  		}
+		
+		
 		if(index<start or index>end)
 			return pred_t().n_element;
 		
@@ -209,6 +309,7 @@ class segment_tree
         T operator*()
         {
             // return *ptr_;
+			// int  x = index_;
             return tree_->get(index_);
         }
         bool operator==(const iterator &rhs)
@@ -249,6 +350,8 @@ class segment_tree
 		n = n*2;
 
 		tree.resize(n);
+		lazy.resize(n,0);
+		update_assign.resize(n,true);
 		for(int i=0;i<n;++i)
 		{
 			tree[i] = {get_neutral_ele() , -1};
@@ -269,7 +372,7 @@ class segment_tree
 	}
 	
 	
-	iterator query(int query_start,int query_end) const
+	iterator query(int query_start,int query_end) 
 	{
 		tree_node t = query_util(0,size_-1,query_start,query_end,0);
 		return iterator(*this, t.index);
@@ -281,6 +384,10 @@ class segment_tree
 
 	void updateRange(int query_start,int query_end,int value){
 		return updateRange_util(0,size_-1,query_start,query_end,value,0);
+	}
+
+	void assignRange(int query_start,int query_end,int value){
+		return assignRange_util(0,size_-1,query_start,query_end,value,0);
 	}
 
 	int size() const
@@ -318,6 +425,7 @@ class segment_tree<T, operation::sum<T> >
 	private:
 	vector<T> tree;
 	vector<T> lazy;
+	vector<bool> update_assign;
 	int n;
 	int size_;
 
@@ -371,14 +479,31 @@ class segment_tree<T, operation::sum<T> >
 
 		if (lazy[np] != 0)
     	{
-        	tree[np] += (end-start+1)*lazy[np];
-       		if (start != end)
-        	{
-            	lazy[np*2+1] += lazy[np];
-            	lazy[np*2+2] += lazy[np];
-        	}
-  
-        	lazy[np] = 0;
+			if(update_assign[np] == true){
+
+				tree[np] += lazy[np];
+				if (start != end)
+				{
+					lazy[np*2+1] += lazy[np];
+					update_assign[2*np+1] =  true;
+					lazy[np*2+2] += lazy[np];
+					update_assign[2*np+2] = true;
+				}
+	
+				lazy[np] = 0;
+			}
+			else{
+				tree[np] = lazy[np];
+				if (start != end)
+				{
+					lazy[np*2+1] = lazy[np];
+					update_assign[2*np+1] =  false;
+					lazy[np*2+2] = lazy[np];
+					update_assign[2*np+2] =  false;
+				}
+				update_assign[np] =  true;
+				lazy[np] = 0;
+			}
   		}
 		if(start>query_end or end<query_start)
 		{
@@ -424,8 +549,11 @@ class segment_tree<T, operation::sum<T> >
         	if (start != end)
     		{
             	lazy[np*2 + 1]   += lazy[np];
+				update_assign[2*np+1] =  true;
             	lazy[np*2 + 2]   += lazy[np];
+				update_assign[2*np+2] =  true;
   	    	}
+			update_assign[np] =  true;
         	lazy[np] = 0;
     	}
 		if(start>query_end or end<query_start)
@@ -437,7 +565,9 @@ class segment_tree<T, operation::sum<T> >
         	if (start != end)
         	{
             	lazy[np*2 + 1]   += value;
+				update_assign[2*np+1] =  true;
             	lazy[np*2 + 2]   += value;
+				update_assign[2*np+2] =  true;
         	}
         	return;
     	}
@@ -447,6 +577,40 @@ class segment_tree<T, operation::sum<T> >
    		tree[np]=operation::sum<T>()(tree[2*np+1],tree[2*np+2]);
 	}
 	
+	void assignRange_util(int start,int end,int query_start,int query_end,int value,int np){
+		if (lazy[np] != 0)
+		{
+		    tree[np] =  (end-start+1)*lazy[np];
+			if (start != end)
+			{
+		    	lazy[np*2 + 1]  = lazy[np];
+				update_assign[2*np+1] =  false;
+		    	lazy[np*2 + 2]  = lazy[np];
+				update_assign[2*np+2] =  false;
+			}
+			update_assign[np] = true;
+			lazy[np] = 0;
+		}
+		if(start>query_end or end<query_start)
+			return;
+		if (start>=query_start && end<=query_end)
+    	{
+        	tree[np] =  (end-start+1)*value;
+        	if (start != end)
+        	{
+            	lazy[np*2 + 1]  = value;
+				update_assign[2*np+1] =  false;
+            	lazy[np*2 + 2]  = value;
+				update_assign[2*np+2] =  false;
+        	}
+        	return;
+    	}
+		int mid=mid(start,end);
+		assignRange_util(start,mid,query_start,query_end,value,2*np+1);
+		assignRange_util(mid+1,end,query_start,query_end,value,2*np+2);
+   		tree[np]=operation::sum<T>()(tree[2*np+1],tree[2*np+2]);	
+	}
+
 	int get_neutral_ele()
 	{
 		return operation::sum<T>().n_element;
@@ -470,6 +634,7 @@ class segment_tree<T, operation::sum<T> >
 
 		tree.resize(n,get_neutral_ele());
 		lazy.resize(n,get_neutral_ele());
+		update_assign.resize(n,true);
 		build_tree(begin, end, 0, size_-1, 0);
 	}
 
@@ -502,6 +667,9 @@ class segment_tree<T, operation::sum<T> >
 		return updateRange_util(0,size_-1,query_start,query_end,value,0);
 	}
 
+	void assignRange(int query_start,int query_end,int value){
+		return assignRange_util(0,size_-1,query_start,query_end,value,0);
+	}
 
 	T operator[](int index) const
 	{
