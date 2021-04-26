@@ -4,7 +4,7 @@ namespace operation
 	class min
 	{
 		public:
-		static const T1 n_element = INT_MAX;
+		static const T1 neutral_element = INT_MAX;
 		template<typename T2>
 		T2 operator() (T2 lhs, T2 rhs) const 
 		{
@@ -16,7 +16,7 @@ namespace operation
 	class max
 	{
 		public:
-		static const T1 n_element = INT_MIN;
+		static const T1 neutral_element = INT_MIN;
 		template<typename T2>
 		T2 operator()(T2 lhs, T2 rhs) const 
 		{
@@ -28,7 +28,7 @@ namespace operation
 	class sum
 	{
 		public:
-		static const int n_element = 0;
+		static const int neutral_element = 0;
 		T operator()(const T lhs,const T rhs) const 
 		{
 			return lhs+rhs;
@@ -39,7 +39,7 @@ namespace operation
 	class gcd
 	{
 		public:
-		static const int n_element = 0;
+		static const int neutral_element = 0;
 		T operator()(const T lhs,const T rhs) const 
 		{
 			return __gcd(lhs,rhs);

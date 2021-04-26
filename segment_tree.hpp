@@ -87,7 +87,7 @@ class segment_tree
 		
 		if(start>query_end or end<query_start)
 		{
-			return {pred_t().n_element, -1}; 
+			return {pred_t().neutral_element, -1}; 
 		}
 		if(query_start<=start and query_end>=end)
 		{
@@ -175,7 +175,7 @@ class segment_tree
 		propagate(start, end, np);
 		
 		if(index<start or index>end)
-			return pred_t().n_element;
+			return pred_t().neutral_element;
 		
 		if(start==end)
 		{
@@ -205,7 +205,6 @@ class segment_tree
 	    int index_;
 
         public:
-        // Iterator(tree_node_t t):value(t.value), index(t.index) 
         iterator(const segment_tree<T, pred_t> &tree, int index):tree_(&tree), index_(index)
         { }
 
@@ -244,15 +243,14 @@ class segment_tree
 		{
 			return index_;
 		}
-
-        // int operator-(const Iterator &rhs)
-        // {
-        //     return ptr_ - rhs.ptr_;
-        // }
-        // int operator+(const Iterator &rhs)
-        // {
-        //     return ptr_ + rhs.ptr_;
-        // }
+        int operator-(const iterator &rhs)
+        {
+            return index_ - rhs.index_;
+        }
+        int operator+(const iterator &rhs)
+        {
+            return index_ + rhs.index_;
+        }
     };
 
 	// Default Constructor
@@ -269,18 +267,35 @@ class segment_tree
 		}
 		n = n*2;
 
-		tree.resize(n,{pred_t().n_element , -1});
+		tree.resize(n,{pred_t().neutral_element , -1});
 		lazy.resize(n,0);
 		update_assign.resize(n,true);
 		build_tree(begin, end, 0, size_-1, 0);
 	}
 	
-	// Copy Constructor - TODO
-	segment_tree(iterator begin, iterator end)
+	// Copy Constructor
+	segment_tree(const segment_tree<T, pred_t> &other): size_(other.size_), n(other.n)
 	{
-		// DO SOMETHING THAT WORKS
+		tree = other.tree;
+		lazy = other.lazy;
+		update_assign = other.update_assign;
 	}
 	
+	segment_tree(iterator begin, iterator end)
+	{
+		size_ = end - begin;
+		n = 1;
+		while(n < size_){
+			n = n*2;
+		}
+		n = n*2;
+
+		tree.resize(n,{pred_t().neutral_element , -1});
+		lazy.resize(n,0);
+		update_assign.resize(n,true);
+		build_tree(begin, end, 0, size_-1, 0);
+	}
+
 	// Destructor
 	~segment_tree()
 	{
@@ -408,7 +423,7 @@ class segment_tree<T, operation::sum<T> >
 
 		if(start>query_end or end<query_start)
 		{
-			return operation::sum<T>().n_element;
+			return operation::sum<T>().neutral_element;
 		}
 		if(query_start<=start and query_end>=end)
 		{
@@ -491,9 +506,9 @@ class segment_tree<T, operation::sum<T> >
    		tree[np]=operation::sum<T>()(tree[2*np+1],tree[2*np+2]);	
 	}
 
-	int get_neutral_ele()
+	int get_neutral_ele() const
 	{
-		return operation::sum<T>().n_element;
+		return operation::sum<T>().neutral_element;
 	}
 
 	T get_util(int start,int end,int index,int np) const
@@ -501,7 +516,7 @@ class segment_tree<T, operation::sum<T> >
 		propagate(start, end, np);
 		
 		if(index<start or index>end)
-			return operation::sum<T>().n_element;
+			return operation::sum<T>().neutral_element;
 		
 		if(start==end)
 		{
@@ -524,14 +539,13 @@ class segment_tree<T, operation::sum<T> >
 
 
 	public:
-	class iterator: public std::iterator<std::input_iterator_tag, T>
+	class iterator: public std::iterator<std::forward_iterator_tag, T>
     {
         private:
         const segment_tree<T,operation::sum<T> > *tree_;
 	    int index_;
 
         public:
-        // Iterator(tree_node_t t):value(t.value), index(t.index) 
         iterator(const segment_tree<T, operation::sum<T> > &tree, int index):tree_(&tree), index_(index)
         { }
 
@@ -570,15 +584,14 @@ class segment_tree<T, operation::sum<T> >
 		{
 			return index_;
 		}
-
-        // int operator-(const Iterator &rhs)
-        // {
-        //     return ptr_ - rhs.ptr_;
-        // }
-        // int operator+(const Iterator &rhs)
-        // {
-        //     return ptr_ + rhs.ptr_;
-        // }
+        int operator-(const iterator &rhs)
+        {
+            return index_ - rhs.index_;
+        }
+        int operator+(const iterator &rhs)
+        {
+            return index_ + rhs.index_;
+        }
     };
 
 	// Default Constructor
@@ -601,10 +614,27 @@ class segment_tree<T, operation::sum<T> >
 		build_tree(begin, end, 0, size_-1, 0);
 	}
 
-	// Copy Constructor - TODO
+	// Copy Constructor
 	segment_tree(const segment_tree<T,operation::sum<T> >& other): size_(other.size_), n(other.n)
 	{
-		// DO SOMETHING THAT WORKS
+		tree = other.tree;
+		lazy = other.lazy;
+		update_assign = other.update_assign;
+	}
+
+	segment_tree(iterator begin, iterator end)
+	{
+		size_ = end - begin;
+		n = 1;
+		while(n < size_){
+			n = n*2;
+		}
+		n = n*2;
+
+		tree.resize(n,get_neutral_ele());
+		lazy.resize(n,get_neutral_ele());
+		update_assign.resize(n,true);
+		build_tree(begin, end, 0, size_-1, 0);
 	}
 	
 	// Destructor
