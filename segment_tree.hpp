@@ -24,34 +24,14 @@ class segment_tree
 	int n;
 	int size_;
 
-	// template<typename iter>
-	// T find_ele(iter &begin_, iter &end_)
-	// {
-	// 	if(begin_!=end_)
-	// 		return *begin_++;
+	template<typename iter>
+	T get_ele(iter &begin_, iter &end_)
+	{
+		if(begin_!=end_)
+			return *begin_++;
 
-	// 	cout<<"WARNING: Returning out of range!";
-	// 	return *end_;
-	// }
-	template<typename iter>
-	T find_ele(iter begin, int index, input_iterator_tag)
-	{
-		while(index > 0)
-		{
-			begin++;
-			index--;
-		}
-		return *begin;
-	}
-	template<typename iter>
-	T find_ele(iter begin, int index, bidirectional_iterator_tag )
-	{
-		return find_ele(begin, index, std::input_iterator_tag{});
-	}
-	template<typename iter>
-	T find_ele(iter begin, int index, random_access_iterator_tag)
-	{
-		return *(begin + index);
+		cout<<"WARNING: Returning out of range!";
+		return *end_;
 	}
 
 	template<typename iter>
@@ -59,9 +39,8 @@ class segment_tree
 	{
 		if(end == start)
 		{
-			tree[np].value = find_ele(begin_, start, typename iterator_traits<iter>::iterator_category());
+			tree[np].value = get_ele(begin_,end_);
 			tree[np].index = start;
-			// tree[np] = find_ele(begin_,end_);
 			return;
 		}
 		int mid=mid(start,end);
@@ -167,7 +146,6 @@ class segment_tree
    		tree[np]=pred_t()(tree[2*np+1],tree[2*np+2]);	
 	}
 
-
 	void assignRange_util(int start,int end,int query_start,int query_end,int value,int np)
 	{
 		propagate(start, end, np);
@@ -190,11 +168,6 @@ class segment_tree
 		assignRange_util(start,mid,query_start,query_end,value,2*np+1);
 		assignRange_util(mid+1,end,query_start,query_end,value,2*np+2);
    		tree[np]=pred_t()(tree[2*np+1],tree[2*np+2]);	
-	}
-
-	T get_neutral_ele()
-	{
-		return pred_t().n_element;
 	}
 
 	T get_util(int start,int end,int index,int np) const
@@ -221,6 +194,8 @@ class segment_tree
 	{
 		return get_util(0,size_-1,index,0);
 	}
+
+
 
 	public:
 	class iterator: public std::iterator<std::input_iterator_tag, T>
@@ -294,13 +269,9 @@ class segment_tree
 		}
 		n = n*2;
 
-		tree.resize(n);
+		tree.resize(n,{pred_t().n_element , -1});
 		lazy.resize(n,0);
 		update_assign.resize(n,true);
-		for(int i=0;i<n;++i)
-		{
-			tree[i] = {get_neutral_ele() , -1};
-		}
 		build_tree(begin, end, 0, size_-1, 0);
 	}
 	
@@ -343,15 +314,15 @@ class segment_tree
 	{
 		return size_==0;
 	}
-	iterator begin()
+	iterator begin() const
 	{
 		return iterator(*this, 0);
 	}
-	iterator end()
+	iterator end() const
 	{
 		return iterator(*this, size_);
 	}
-	void display()
+	void display() const
 	{
 		iterator first = begin();
 		iterator last = end();
@@ -375,32 +346,13 @@ class segment_tree<T, operation::sum<T> >
 	int size_;
 
 	template<typename iter>
-	// T find_ele(iter &begin_, iter &end_)
-	// {
-	// 	if(begin_!=end_)
-	// 		return *begin_++;
-	// 	cout<<"WARNING: Returning out of range!";
-	// 	return *end_;
-	// }
-	template<typename iter>
-	T find_ele(iter begin, int index, input_iterator_tag)
+	T get_ele(iter &begin_, iter &end_)
 	{
-		while(index > 0)
-		{
-			begin++;
-			index--;
-		}
-		return *begin;
-	}
-	template<typename iter>
-	T find_ele(iter begin, int index, bidirectional_iterator_tag )
-	{
-		return find_ele(begin, index, std::input_iterator_tag{});
-	}
-	template<typename iter>
-	T find_ele(iter begin, int index, random_access_iterator_tag)
-	{
-		return *(begin + index);
+		if(begin_!=end_)
+			return *begin_++;
+
+		cout<<"WARNING: Returning out of range!";
+		return *end_;
 	}
 
 	template<typename iter>
@@ -408,8 +360,7 @@ class segment_tree<T, operation::sum<T> >
 	{
 		if(end == start)
 		{
-			// tree[np] = find_ele(begin_, start, typename iterator_traits<iter>::iterator_category());
-			tree[np] = find_ele(begin_,end_);
+			tree[np] = get_ele(begin_,end_);
 			return;
 		}
 		int mid=mid(start,end);
@@ -423,9 +374,9 @@ class segment_tree<T, operation::sum<T> >
 	{
 		if (lazy[np] != 0)
     	{
-			if(update_assign[np] == true){
-
-				tree[np] +=  (end-start+1)*lazy[np];
+			if(update_assign[np] == true)
+			{
+				tree[np] += (end-start+1)*lazy[np];
 				if (start != end)
 				{
 					lazy[np*2+1] += lazy[np];
@@ -435,8 +386,9 @@ class segment_tree<T, operation::sum<T> >
 				}
 				lazy[np] = 0;
 			}
-			else{
-				tree[np] =  (end-start+1)*lazy[np];
+			else
+			{
+				tree[np] = (end-start+1)*lazy[np];
 				if (start != end)
 				{
 					lazy[np*2+1] = lazy[np];
@@ -500,7 +452,6 @@ class segment_tree<T, operation::sum<T> >
 		if (start>=query_start && end<=query_end)
     	{
         	tree[np] += (end-start+1)*value;
-  
         	if (start != end)
         	{
             	lazy[np*2 + 1]   += value;
@@ -570,6 +521,8 @@ class segment_tree<T, operation::sum<T> >
 		return get_util(0,size_-1,index,0);
 	}
 
+
+
 	public:
 	class iterator: public std::iterator<std::input_iterator_tag, T>
     {
@@ -635,8 +588,7 @@ class segment_tree<T, operation::sum<T> >
 	template<typename iter>
 	segment_tree(iter begin, iter end)
 	{
-		cout<<"Specialized class\n";
-		size_ =  (int)distance(begin, end);
+		size_ = (int) distance(begin, end);
 		n = 1;
 		while(n < size_){
 			n = n*2;
@@ -687,15 +639,15 @@ class segment_tree<T, operation::sum<T> >
 	{
 		return size_==0;
 	}
-	iterator begin()
+	iterator begin() const
 	{
 		return iterator(*this, 0);
 	}
-	iterator end()
+	iterator end() const
 	{
 		return iterator(*this, size_);
 	}
-	void display()
+	void display() const
 	{
 		iterator first = begin();
 		iterator last = end();
