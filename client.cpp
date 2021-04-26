@@ -24,6 +24,7 @@ int main()
 	}
 	tree.display();
 	tree.assignRange(1,3,10);
+	tree.updateRange(0,2,100);
 	for(int i=0;i<a.size();++i)
 	{
 		cout<<tree.query(0,i)<<"\n";
@@ -63,6 +64,7 @@ int main()
 	cout<<"after assign range\n";
 	tree2.assignRange(1,3,100);
 	tree2.updateRange(0,2,200);
+	// tree2.assignRange(1,3,1000);
 	tree2.display();
 	for(int i=0;i<a.size();++i)
 	{
@@ -78,9 +80,9 @@ int main()
 	}
 	#endif
 
-	it = find(tree2.begin(), tree2.end(), 19);
-	cout<<"Found: "<<*it<<"\n";
-	cout<< (find(tree2.begin(), tree2.end(), 19) == tree2.end()) <<"\n";
+	// it = find(tree2.begin(), tree2.end(), 19);
+	// cout<<"Found: "<<*it<<"\n";
+	// cout<< (find(tree2.begin(), tree2.end(), 19) == tree2.end()) <<"\n";
 	
 	return 0;	
 }
