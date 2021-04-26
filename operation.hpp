@@ -4,7 +4,7 @@ namespace operation
 	class min
 	{
 		public:
-		static T1* n_element;
+		static const T1 n_element = INT_MAX;
 		template<typename T2>
 		T2 operator() (T2 lhs, T2 rhs) const 
 		{
@@ -12,14 +12,15 @@ namespace operation
 		}
 	};
 
-	template<typename T>
+	template<typename T1>
 	class max
 	{
 		public:
-		static T* n_element;
-		T* operator()(T* lhs, T* rhs) const 
+		static const T1 n_element = INT_MIN;
+		template<typename T2>
+		T2 operator()(T2 lhs, T2 rhs) const 
 		{
-			return (*lhs>*rhs) ? lhs : rhs;
+			return (lhs.value>rhs.value) ? lhs : rhs;
 		}
 	};
 
@@ -46,9 +47,3 @@ namespace operation
 	};
 
 }
-
-template<typename T>
-T* operation::min<T>::n_element = new int(INT_MAX);
-
-template<typename T>
-T* operation::max<T>::n_element = new int(INT_MIN);
