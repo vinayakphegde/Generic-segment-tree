@@ -57,8 +57,6 @@ class segment_tree
 	template<typename iter>
 	void build_tree(iter &begin_, iter &end_, int start,int end, int np)
 	{
-		
-
 		if(end == start)
 		{
 			tree[np].value = find_ele(begin_, start, typename iterator_traits<iter>::iterator_category());
@@ -72,7 +70,7 @@ class segment_tree
 		tree[np] = pred_t()(tree[2*np+1],tree[2*np+2]);
 	}
 	
-	tree_node query_util(int start,int end,int query_start,int query_end,int np) 
+	void propagate(int start, int end, int np) const
 	{
 		if (lazy[np] != 0)
     	{ 
@@ -102,6 +100,12 @@ class segment_tree
 				lazy[np] = 0;
 			}
   		}
+	}
+	
+	tree_node query_util(int start,int end,int query_start,int query_end,int np) 
+	{
+		propagate(start, end, np);
+		
 		if(start>query_end or end<query_start)
 		{
 			return {pred_t().n_element, -1}; 
@@ -139,44 +143,10 @@ class segment_tree
 		tree[np]=pred_t()(tree[2*np+1],tree[2*np+2]);
 	}
 	
-	void updateRange_util(int start,int end,int query_start,int query_end,int value,int np){
-		if (lazy[np] != 0)
-		{
-			if(update_assign[np] == true){
-				tree[np].value += lazy[np];
-				if (start != end)
-				{
-					lazy[np*2+1] += lazy[np];
-					update_assign[2*np+1] =  true;
-					lazy[np*2+2] += lazy[np];
-					update_assign[2*np+1] =  true;
-				}
-	
-				lazy[np] = 0;
-			}
-			else{
-				tree[np].value = lazy[np];
-				if (start != end)
-				{
-					lazy[np*2+1] = lazy[np];
-					update_assign[2*np+1] =  false;
-					lazy[np*2+2] = lazy[np];
-					update_assign[2*np+1] =  false;
-				}
-				update_assign[np] =  true;
-				lazy[np] = 0;
-			}
-		 //    tree[np].value += lazy[np];
-			// if (start != end)
-			// {
-		 //    	lazy[np*2 + 1]  += lazy[np];
-			// 	update_assign[2*np+1] =  true;
-		 //    	lazy[np*2 + 2]  += +lazy[np];
-			// 	update_assign[2*np+2] =  true;
-			// }
-			// update_assign[np] =  true;
-			// lazy[np] = 0;
-		}
+	void updateRange_util(int start,int end,int query_start,int query_end,int value,int np)
+	{
+		propagate(start, end, np);
+			
 		if(start>query_end or end<query_start)
 			return;
 		if (start>=query_start && end<=query_end)
@@ -198,44 +168,10 @@ class segment_tree
 	}
 
 
-	void assignRange_util(int start,int end,int query_start,int query_end,int value,int np){
-		if (lazy[np] != 0)
-		{
-			if(update_assign[np] == true){
-				tree[np].value += lazy[np];
-				if (start != end)
-				{
-					lazy[np*2+1] += lazy[np];
-					update_assign[2*np+1] =  true;
-					lazy[np*2+2] += lazy[np];
-					update_assign[2*np+1] =  true;
-				}
-	
-				lazy[np] = 0;
-			}
-			else{
-				tree[np].value = lazy[np];
-				if (start != end)
-				{
-					lazy[np*2+1] = lazy[np];
-					update_assign[2*np+1] =  false;
-					lazy[np*2+2] = lazy[np];
-					update_assign[2*np+1] =  false;
-				}
-				update_assign[np] =  true;
-				lazy[np] = 0;
-			}
-		 //    tree[np].value = lazy[np];
-			// if (start != end)
-			// {
-		 //    	lazy[np*2 + 1]  = lazy[np];
-			// 	update_assign[2*np+1] =  false;
-		 //    	lazy[np*2 + 2]  = lazy[np];
-			// 	update_assign[2*np+2] =  false;
-			// }
-			// update_assign[np] =  true;
-			// lazy[np] = 0;
-		}
+	void assignRange_util(int start,int end,int query_start,int query_end,int value,int np)
+	{
+		propagate(start, end, np);
+		
 		if(start>query_end or end<query_start)
 			return;
 		if (start>=query_start && end<=query_end)
@@ -263,36 +199,7 @@ class segment_tree
 
 	T get_util(int start,int end,int index,int np) const
 	{
-		if (lazy[np] != 0)
-    	{
-			if(update_assign[np] == true){
-
-				tree[np].value += lazy[np];
-				if (start != end)
-				{
-					lazy[np*2+1] += lazy[np];
-					update_assign[np*2+1] = true;
-					lazy[np*2+2] += lazy[np];
-					update_assign[np*2+2] = true;
-				}
-	
-				lazy[np] = 0;
-			}
-			else{
-				tree[np].value = lazy[np];
-				if (start != end)
-				{
-					lazy[np*2+1] = lazy[np];
-					update_assign[np*2+1] = false;
-					lazy[np*2+2] = lazy[np];
-					update_assign[np*2+2] = false;
-				}
-	
-				lazy[np] = 0;
-				update_assign[np] = true;
-			}
-  		}
-		
+		propagate(start, end, np);
 		
 		if(index<start or index>end)
 			return pred_t().n_element;
@@ -306,13 +213,8 @@ class segment_tree
 		{
 			return get_util(mid+1,end,index,2*np+2);
 		}
-		else 
-		{
-			return get_util(start,mid,index,2*np+1);
-		}
-
-		// Apply operations
-		// tree[np]=pred_t()(tree[2*np+1],tree[2*np+2]);
+		
+		return get_util(start,mid,index,2*np+1);
 	}
 
 	T get(int index) const
@@ -333,10 +235,7 @@ class segment_tree
         { }
 
 		iterator(const iterator& rhs):tree_(rhs.tree_), index_(rhs.index_)
-		{
-			// tree_ = rhs.tree_;
-			// index_ = rhs.index_;
-		}
+		{ }
 		iterator& operator=(const iterator& rhs)
 		{
 			tree_ = rhs.tree_;
@@ -356,8 +255,6 @@ class segment_tree
         }
         T operator*()
         {
-            // return *ptr_;
-			// int  x = index_;
             return tree_->get(index_);
         }
         bool operator==(const iterator &rhs)
@@ -444,7 +341,7 @@ class segment_tree
 	}
 	bool empty() const
 	{
-		return size==0;
+		return size_==0;
 	}
 	iterator begin()
 	{
@@ -471,13 +368,13 @@ template<typename T>
 class segment_tree<T, operation::sum<T> >
 {
 	private:
-	vector<T> tree;
-	vector<T> lazy;
-	vector<bool> update_assign;
+	mutable vector<T> tree;
+	mutable vector<T> lazy;
+	mutable vector<bool> update_assign;
 	int n;
 	int size_;
 
-	// template<typename iter>
+	template<typename iter>
 	// T find_ele(iter &begin_, iter &end_)
 	// {
 	// 	if(begin_!=end_)
@@ -511,8 +408,8 @@ class segment_tree<T, operation::sum<T> >
 	{
 		if(end == start)
 		{
-			tree[np] = find_ele(begin_, start, typename iterator_traits<iter>::iterator_category());
-			// tree[np] = find_ele(begin_,end_);
+			// tree[np] = find_ele(begin_, start, typename iterator_traits<iter>::iterator_category());
+			tree[np] = find_ele(begin_,end_);
 			return;
 		}
 		int mid=mid(start,end);
@@ -522,9 +419,8 @@ class segment_tree<T, operation::sum<T> >
 		tree[np]=operation::sum<T>()(tree[2*np+1],tree[2*np+2]);
 	}
 	
-	T query_util(int start,int end,int query_start,int query_end,int np) 
+	void propagate(int start, int end, int np) const
 	{
-
 		if (lazy[np] != 0)
     	{
 			if(update_assign[np] == true){
@@ -552,6 +448,12 @@ class segment_tree<T, operation::sum<T> >
 				lazy[np] = 0;
 			}
   		}
+	}
+
+	T query_util(int start,int end,int query_start,int query_end,int np) 
+	{
+		propagate(start, end, np);
+
 		if(start>query_end or end<query_start)
 		{
 			return operation::sum<T>().n_element;
@@ -589,44 +491,10 @@ class segment_tree<T, operation::sum<T> >
 		tree[np]=operation::sum<T>()(tree[2*np+1],tree[2*np+2]);
 	}
 
-	void updateRange_util(int start,int end,int query_start,int query_end,int value,int np){
-		if (lazy[np] != 0)
-    	{
-    		if(update_assign[np] == true){
+	void updateRange_util(int start,int end,int query_start,int query_end,int value,int np)
+	{
+		propagate(start, end, np);
 
-				tree[np] += (end-start+1)*lazy[np];
-				if (start != end)
-				{
-					lazy[np*2+1] += lazy[np];
-					update_assign[2*np+1] =  true;
-					lazy[np*2+2] += lazy[np];
-					update_assign[2*np+2] = true;
-				}
-				lazy[np] = 0;
-			}
-			else{
-				tree[np] = (end-start+1)*lazy[np];
-				if (start != end)
-				{
-					lazy[np*2+1] = lazy[np];
-					update_assign[2*np+1] =  false;
-					lazy[np*2+2] = lazy[np];
-					update_assign[2*np+2] =  false;
-				}
-				update_assign[np] =  true;
-				lazy[np] = 0;
-			}
-	  //       tree[np] += (end-start+1)*lazy[np];
-   //      	if (start != end)
-   //  		{
-   //          	lazy[np*2 + 1]   += lazy[np];
-			// 	update_assign[2*np+1] =  true;
-   //          	lazy[np*2 + 2]   += lazy[np];
-			// 	update_assign[2*np+2] =  true;
-  	//     	}
-			// update_assign[np] =  true;
-   //      	lazy[np] = 0;
-    	}
 		if(start>query_end or end<query_start)
 			return;
 		if (start>=query_start && end<=query_end)
@@ -648,43 +516,10 @@ class segment_tree<T, operation::sum<T> >
    		tree[np]=operation::sum<T>()(tree[2*np+1],tree[2*np+2]);
 	}
 	
-	void assignRange_util(int start,int end,int query_start,int query_end,int value,int np){
-		if (lazy[np] != 0)
-		{
-			if(update_assign[np] == true){
-				tree[np] += (end-start+1)*lazy[np];
-				if (start != end)
-				{
-					lazy[np*2+1] += lazy[np];
-					update_assign[2*np+1] =  true;
-					lazy[np*2+2] += lazy[np];
-					update_assign[2*np+2] = true;
-				}
-				lazy[np] = 0;
-			}
-			else{
-				tree[np] = (end-start+1)*lazy[np];
-				if (start != end)
-				{
-					lazy[np*2+1] = lazy[np];
-					update_assign[2*np+1] =  false;
-					lazy[np*2+2] = lazy[np];
-					update_assign[2*np+2] =  false;
-				}
-				update_assign[np] =  true;
-				lazy[np] = 0;
-			}
-		 //    tree[np] =  (end-start+1)*lazy[np];
-			// if (start != end)
-			// {
-		 //    	lazy[np*2 + 1]  = lazy[np];
-			// 	update_assign[2*np+1] =  false;
-		 //    	lazy[np*2 + 2]  = lazy[np];
-			// 	update_assign[2*np+2] =  false;
-			// }
-			// update_assign[np] = true;
-			// lazy[np] = 0;
-		}
+	void assignRange_util(int start,int end,int query_start,int query_end,int value,int np)
+	{
+		propagate(start, end, np);
+		
 		if(start>query_end or end<query_start)
 			return;
 		if (start>=query_start && end<=query_end)
@@ -710,7 +545,89 @@ class segment_tree<T, operation::sum<T> >
 		return operation::sum<T>().n_element;
 	}
 
+	T get_util(int start,int end,int index,int np) const
+	{
+		propagate(start, end, np);
+		
+		if(index<start or index>end)
+			return operation::sum<T>().n_element;
+		
+		if(start==end)
+		{
+			return tree[np];
+		}
+		int mid=mid(start,end);
+		if(index>mid)
+		{
+			return get_util(mid+1,end,index,2*np+2);
+		}
+		
+		return get_util(start,mid,index,2*np+1);
+	}
+
+	T get(int index) const
+	{
+		return get_util(0,size_-1,index,0);
+	}
+
 	public:
+	class iterator: public std::iterator<std::input_iterator_tag, T>
+    {
+        private:
+        const segment_tree<T,operation::sum<T> > *tree_;
+	    int index_;
+
+        public:
+        // Iterator(tree_node_t t):value(t.value), index(t.index) 
+        iterator(const segment_tree<T, operation::sum<T> > &tree, int index):tree_(&tree), index_(index)
+        { }
+
+		iterator(const iterator& rhs):tree_(rhs.tree_), index_(rhs.index_)
+		{ }
+		iterator& operator=(const iterator& rhs)
+		{
+			tree_ = rhs.tree_;
+			index_ = rhs.index_;
+			return *this;
+		}
+        iterator& operator++()
+        {
+            ++index_;
+            return *this;
+        }
+        iterator operator++(int)
+        {
+            iterator temp(*this);
+            ++(*this);
+            return temp;
+        }
+        T operator*()
+        {
+            return tree_->get(index_);
+        }
+        bool operator==(const iterator &rhs)
+        {
+            return index_ == rhs.index_;
+        }
+        bool operator!=(const iterator &rhs)
+        {
+            return !(*this == rhs);
+        }
+		int get_index()
+		{
+			return index_;
+		}
+
+        // int operator-(const Iterator &rhs)
+        // {
+        //     return ptr_ - rhs.ptr_;
+        // }
+        // int operator+(const Iterator &rhs)
+        // {
+        //     return ptr_ + rhs.ptr_;
+        // }
+    };
+
 	// Default Constructor
 	segment_tree() = delete;
 
@@ -731,8 +648,6 @@ class segment_tree<T, operation::sum<T> >
 		update_assign.resize(n,true);
 		build_tree(begin, end, 0, size_-1, 0);
 	}
-
-
 
 	// Copy Constructor - TODO
 	segment_tree(const segment_tree<T,operation::sum<T> >& other): size_(other.size_), n(other.n)
@@ -756,7 +671,6 @@ class segment_tree<T, operation::sum<T> >
 		return update_util(0,size_-1,index,value,0);
 	}
 
-	//range update
 	void updateRange(int query_start,int query_end,int value){
 		return updateRange_util(0,size_-1,query_start,query_end,value,0);
 	}
@@ -765,25 +679,32 @@ class segment_tree<T, operation::sum<T> >
 		return assignRange_util(0,size_-1,query_start,query_end,value,0);
 	}
 
-	T operator[](int index) const
-	{
-		return query(index,index);
-	}
-	void display()
-	{
-		for(int i=0;i<n;i++)
-		{
-			cout << tree[i] <<"  "; 
-		}
-		cout << "\n";
-	}
 	int size() const
 	{
 		return size_;
 	}
-	bool empty()
+	bool empty() const
 	{
-		return size==0;
+		return size_==0;
+	}
+	iterator begin()
+	{
+		return iterator(*this, 0);
+	}
+	iterator end()
+	{
+		return iterator(*this, size_);
+	}
+	void display()
+	{
+		iterator first = begin();
+		iterator last = end();
+		while(first!=last)
+		{
+			cout<<*first<<" ";
+			++first;
+		}
+		cout<<"\n";
 	}
 };
 
