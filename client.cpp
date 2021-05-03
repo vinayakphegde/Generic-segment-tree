@@ -22,6 +22,9 @@ int main()
 		cout << "\n";
 		cout<< "Performing Lazy assign Operation from index 1 to 3:" <<"\n";
 		tree.assignRange(1,3,10);
+		cout << "The current state of the tree:" << "\n";
+		tree.display_WU();
+		cout<< "After Propogating the updates/assign" << "\n";
 		tree.display();
 		cout<< "Performing Query Operation:" <<"\n";
 		for(int i=0;i<a.size();++i)
@@ -32,6 +35,9 @@ int main()
 		cout << "\n";
 		cout<< "Performing lazy update operation from index 0 to 2:" <<"\n";
 		tree.updateRange(0,2,100);
+		cout << "The current state of the tree:" << "\n";
+		tree.display_WU();
+		cout<< "After Propogating the updates/assign" << "\n";
 		tree.display();
 		cout<< "Performing Query Operation:" <<"\n";
 		for(int i=0;i<a.size();++i)
@@ -43,6 +49,9 @@ int main()
 		cout << "Performing lazy assign and update operation one after another:\n";
 		tree.assignRange(1,3,10);
 		tree.updateRange(0,2,100);
+		cout << "The current state of the tree:" << "\n";
+		tree.display_WU();
+		cout<< "After Propogating the updates/assign" << "\n";
 		tree.display();
 		cout<< "Performing Query Operation:" <<"\n";
 		for(int i=0;i<a.size();++i)
@@ -52,8 +61,6 @@ int main()
 		}
 		cout << "\n";
 		cout << "\n";
-
-		
 	}
 	{
 		cout<<"\n"<<"MIN: "<<"\n";
@@ -69,6 +76,9 @@ int main()
 		cout << "\n";
 		cout<< "Performing Lazy assign Operation from index 1 to 3:" <<"\n";
 		tree2.assignRange(1,3,10);
+		cout << "The current state of the tree:" << "\n";
+		tree2.display_WU();
+		cout<< "After Propogating the updates/assign" << "\n";
 		tree2.display();
 		cout<< "Performing Query Operation:" <<"\n";
 		for(int i=0;i<a.size();++i)
@@ -80,6 +90,9 @@ int main()
 		cout << "\n";
 		cout<< "Performing lazy update operation from index 0 to 2:" <<"\n";
 		tree2.updateRange(0,2,100);
+		cout << "The current state of the tree:" << "\n";
+		tree2.display_WU();
+		cout<< "After Propogating the updates/assign" << "\n";
 		tree2.display();
 		cout<< "Performing Query Operation:" <<"\n";
 		for(int i=0;i<a.size();++i)
@@ -92,6 +105,9 @@ int main()
 		cout << "Performing lazy assign and update operation one after another:\n";
 		tree2.assignRange(1,3,10);
 		tree2.updateRange(0,2,100);
+		cout << "The current state of the tree:" << "\n";
+		tree2.display_WU();
+		cout<< "After Propogating the updates/assign" << "\n";
 		tree2.display();
 		cout<< "Performing Query Operation:" <<"\n";
 		for(int i=0;i<a.size();++i)
@@ -117,6 +133,9 @@ int main()
 		cout << "\n";
 		cout<< "Performing Lazy assign Operation from index 1 to 3:" <<"\n";
 		tree2.assignRange(1,3,10);
+		cout << "The current state of the tree:" << "\n";
+		tree2.display_WU();
+		cout<< "After Propogating the updates/assign" << "\n";
 		tree2.display();
 		cout<< "Performing Query Operation:" <<"\n";
 		for(int i=0;i<a.size();++i)
@@ -128,6 +147,9 @@ int main()
 		cout << "\n";
 		cout<< "Performing lazy update operation from index 0 to 2:" <<"\n";
 		tree2.updateRange(0,2,100);
+		cout << "The current state of the tree:" << "\n";
+		tree2.display_WU();
+		cout<< "After Propogating the updates/assign" << "\n";
 		tree2.display();
 		cout<< "Performing Query Operation:" <<"\n";
 		for(int i=0;i<a.size();++i)
@@ -140,6 +162,9 @@ int main()
 		cout << "Performing lazy assign and update operation one after another:\n";
 		tree2.assignRange(1,3,10);
 		tree2.updateRange(0,2,100);
+		cout << "The current state of the tree:" << "\n";
+		tree2.display_WU();
+		cout<< "After Propogating the updates/assign" << "\n";
 		tree2.display();
 		cout<< "Performing Query Operation:" <<"\n";
 		for(int i=0;i<a.size();++i)
@@ -165,6 +190,9 @@ int main()
 		cout << "\n";
 		cout<< "Performing Lazy assign Operation from index 1 to 3:" <<"\n";
 		tree.assignRange(1,3,10);
+		cout << "The current state of the tree:" << "\n";
+		tree.display_WU();
+		cout<< "After Propogating the updates/assign" << "\n";
 		tree.display();
 		cout<< "Performing Query Operation:" <<"\n";
 		for(int i=0;i<a.size();++i)
@@ -175,6 +203,9 @@ int main()
 		cout << "\n";
 		cout<< "Performing lazy update operation from index 0 to 2:" <<"\n";
 		tree.updateRange(0,2,100);
+		cout << "The current state of the tree:" << "\n";
+		tree.display_WU();
+		cout<< "After Propogating the updates/assign" << "\n";
 		tree.display();
 		cout<< "Performing Query Operation:" <<"\n";
 		for(int i=0;i<a.size();++i)
@@ -186,6 +217,9 @@ int main()
 		cout << "Performing lazy assign and update operation one after another:\n";
 		tree.assignRange(1,3,10);
 		tree.updateRange(0,2,100);
+		cout << "The current state of the tree:" << "\n";
+		tree.display_WU();
+		cout<< "After Propogating the updates/assign" << "\n";
 		tree.display();
 		cout<< "Performing Query Operation:" <<"\n";
 		for(int i=0;i<a.size();++i)

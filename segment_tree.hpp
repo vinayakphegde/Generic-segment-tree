@@ -353,6 +353,36 @@ class segment_tree
 		}
 		cout<<"\n";
 	}
+
+	T get_util_WU(int start,int end,int index,int np) const
+	{
+		
+		if(index<start or index>end)
+			return operation::sum<T>().neutral_element;
+		
+		if(start==end)
+		{
+			return tree[np].value;
+		}
+		int mid=mid(start,end);
+		if(index>mid)
+		{
+			return get_util_WU(mid+1,end,index,2*np+2);
+		}
+		
+		return get_util_WU(start,mid,index,2*np+1);
+	}
+	void display_WU() const
+	{
+		int first = begin().get_index();
+		int last = end().get_index();
+		while(first!=last){
+			cout << get_util_WU(0,size_-1,first,0) << " " ;
+			first++;
+		}
+		cout << "\n";
+	}
+
 };
 
 template<typename T>
@@ -701,6 +731,35 @@ class segment_tree<T, operation::sum<T> >
 		}
 		cout<<"\n";
 	}
+
+	T get_util_WU(int start,int end,int index,int np) const
+	{
+		
+		if(index<start or index>end)
+			return operation::sum<T>().neutral_element;
+		
+		if(start==end)
+		{
+			return tree[np];
+		}
+		int mid=mid(start,end);
+		if(index>mid)
+		{
+			return get_util_WU(mid+1,end,index,2*np+2);
+		}
+		
+		return get_util_WU(start,mid,index,2*np+1);
+	}
+	void display_WU() const
+	{
+		int first = begin().get_index();
+		int last = end().get_index();
+		while(first!=last){
+			cout << get_util_WU(0,size_-1,first,0) << " " ;
+			first++;
+		}
+		cout << "\n";
+	}
 };
 template<typename T>
 class segment_tree<T, operation::gcd<T> >
@@ -1043,6 +1102,34 @@ class segment_tree<T, operation::gcd<T> >
 			++first;
 		}
 		cout<<"\n";
+	}
+	T get_util_WU(int start,int end,int index,int np) const
+	{
+		
+		if(index<start or index>end)
+			return operation::sum<T>().neutral_element;
+		
+		if(start==end)
+		{
+			return tree[np];
+		}
+		int mid=mid(start,end);
+		if(index>mid)
+		{
+			return get_util_WU(mid+1,end,index,2*np+2);
+		}
+		
+		return get_util_WU(start,mid,index,2*np+1);
+	}
+	void display_WU() const
+	{
+		int first = begin().get_index();
+		int last = end().get_index();
+		while(first!=last){
+			cout << get_util_WU(0,size_-1,first,0) << " " ;
+			first++;
+		}
+		cout << "\n";
 	}
 };
 #endif
