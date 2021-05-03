@@ -198,7 +198,7 @@ class segment_tree
 
 
 	public:
-	class iterator: public std::iterator<std::input_iterator_tag, T>
+	class iterator: public std::iterator<std::bidirectional_iterator_tag, T>
     {
         private:
         const segment_tree<T, pred_t> *tree_;
@@ -225,6 +225,17 @@ class segment_tree
         {
             iterator temp(*this);
             ++(*this);
+            return temp;
+        }
+		iterator& operator--()
+        {
+            --index_;
+            return *this;
+        }
+        iterator operator--(int)
+        {
+            iterator temp(*this);
+            --(*this);
             return temp;
         }
         T operator*()
@@ -358,7 +369,7 @@ class segment_tree
 	{
 		
 		if(index<start or index>end)
-			return operation::sum<T>().neutral_element;
+			return pred_t().neutral_element;
 		
 		if(start==end)
 		{
@@ -574,7 +585,7 @@ class segment_tree<T, operation::sum<T> >
 
 
 	public:
-	class iterator: public std::iterator<std::forward_iterator_tag, T>
+	class iterator: public std::iterator<std::bidirectional_iterator_tag, T>
     {
         private:
         const segment_tree<T,operation::sum<T> > *tree_;
@@ -601,6 +612,17 @@ class segment_tree<T, operation::sum<T> >
         {
             iterator temp(*this);
             ++(*this);
+            return temp;
+        }
+		iterator& operator--()
+        {
+            --index_;
+            return *this;
+        }
+        iterator operator--(int)
+        {
+            iterator temp(*this);
+            --(*this);
             return temp;
         }
         T operator*()
@@ -950,7 +972,7 @@ class segment_tree<T, operation::gcd<T> >
 
 
 	public:
-	class iterator: public std::iterator<std::forward_iterator_tag, T>
+	class iterator: public std::iterator<std::bidirectional_iterator_tag, T>
     {
         private:
         const segment_tree<T,operation::gcd<T> > *tree_;
@@ -977,6 +999,17 @@ class segment_tree<T, operation::gcd<T> >
         {
             iterator temp(*this);
             ++(*this);
+            return temp;
+        }
+		iterator& operator--()
+        {
+            --index_;
+            return *this;
+        }
+        iterator operator--(int)
+        {
+            iterator temp(*this);
+            --(*this);
             return temp;
         }
         T operator*()
@@ -1107,7 +1140,7 @@ class segment_tree<T, operation::gcd<T> >
 	{
 		
 		if(index<start or index>end)
-			return operation::sum<T>().neutral_element;
+			return operation::gcd<T>().neutral_element;
 		
 		if(start==end)
 		{
