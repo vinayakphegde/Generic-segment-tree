@@ -281,6 +281,12 @@ int main()
 		tree.display_WU();
 		cout<< "After Propogating the updates/assign" << "\n";
 		tree.display();
+		cout<< "Performing Query Operation:" <<"\n";
+		for(int i=0;i<s.size();++i)
+		{
+			cout << "Query from index 0 till " << i <<": ";
+			cout<<tree.query(0,i)<<"\n";
+		}
 	}
 	return 0;	
 }
