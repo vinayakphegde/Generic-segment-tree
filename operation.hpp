@@ -46,4 +46,17 @@ namespace operation
 		}
 	};
 
+	template<typename T>
+	class concat
+	{
+		public:
+		static const string neutral_element ;
+		T operator()(const T lhs,const T rhs) const 
+		{
+			return lhs+rhs;
+		}
+	};
+	template<typename T>
+	const string concat<T>::neutral_element = "";
+
 }
