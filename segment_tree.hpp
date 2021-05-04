@@ -1545,7 +1545,8 @@ class segment_tree<T, operation::concat<T> >
 	
 	T query(int query_start,int query_end) 
 	{
-		return query_util(0,size_-1,query_start,query_end,0);
+		return segment_tree(begin(),end()).query_util(0,size_-1,query_start,query_end,0);
+		// return query_util(0,size_-1,query_start,query_end,0);
 	}
 	void update(int index,string value)
 	{
