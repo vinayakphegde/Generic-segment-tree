@@ -440,6 +440,7 @@ class segment_tree
 
 };
 
+
 template<typename T>
 class segment_tree<T, operation::sum<T> >
 {

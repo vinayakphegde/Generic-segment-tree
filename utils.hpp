@@ -21,4 +21,5 @@ int calculate_n(int size)
 
     return n;
 }
+
 #endif

@@ -74,5 +74,4 @@ namespace seg_tree{
     };
 }
 
-
 #endif

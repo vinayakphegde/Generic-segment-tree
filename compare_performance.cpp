@@ -15,6 +15,7 @@ vector<int> get_random_vector(int n)
 
     return a;
 }
+
 template<typename pred_t> 
 void compute(vector<int> &a, int l, int r)
 {
