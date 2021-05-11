@@ -1,48 +1,75 @@
 #ifndef ITERATOR_H
 #define ITERATOR_H
+#include <iterator>
+
+template<typename T, typename pred_t>
+class segment_tree;
 
 namespace seg_tree{
-    template<typename T>
-    class Iterator
+    template<typename T, typename pred_t>
+    class iterator: public std::iterator<std::bidirectional_iterator_tag, T>
     {
         private:
-        T* ptr_;
+        const segment_tree<T, pred_t> *tree_;
+	    int index_;
 
         public:
-        Iterator(T* ptr):ptr_(ptr) 
+        iterator(const segment_tree<T, pred_t> &tree_, int index):tree_(&tree_), index_(index)
         { }
 
-        Iterator& operator++()
+		iterator(const iterator& rhs):tree_(rhs.tree_), index_(rhs.index_)
+		{ }
+		iterator& operator=(const iterator& rhs)
+		{
+			tree_ = rhs.tree_;
+			index_ = rhs.index_;
+			return *this;
+		}
+        iterator& operator++()
         {
-            ++ptr_;
+            ++index_;
             return *this;
         }
-        Iterator operator++(int)
+        iterator operator++(int)
         {
-            Iterator temp(*this);
+            iterator temp(*this);
             ++(*this);
+            return temp;
+        }
+		iterator& operator--()
+        {
+            --index_;
+            return *this;
+        }
+        iterator operator--(int)
+        {
+            iterator temp(*this);
+            --(*this);
             return temp;
         }
         T operator*()
         {
-            return *ptr_;
+            return tree_->get(index_);
         }
-        bool operator==(const Iterator &rhs)
+        bool operator==(const iterator &rhs)
         {
-            return ptr_ == rhs.ptr_;
+            return index_ == rhs.index_;
         }
-        bool operator!=(const Iterator &rhs)
+        bool operator!=(const iterator &rhs)
         {
             return !(*this == rhs);
         }
-
-        int operator-(const Iterator &rhs)
+		int get_index()
+		{
+			return index_;
+		}
+        int operator-(const iterator &rhs)
         {
-            return ptr_ - rhs.ptr_;
+            return index_ - rhs.index_;
         }
-        int operator+(const Iterator &rhs)
+        int operator+(const iterator &rhs)
         {
-            return ptr_ + rhs.ptr_;
+            return index_ + rhs.index_;
         }
     };
 }

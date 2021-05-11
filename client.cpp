@@ -6,7 +6,7 @@ using namespace std;
 
 int main()
 {
-	#if 0
+	#if 1
 	vector<int> a = {2,3,1,6};
 	{
 		cout<<"\n"<<"SUM: "<<"\n";
@@ -260,33 +260,5 @@ int main()
 		cout << count(tree2.begin(),tree2.end(),3) << "\n";
 	}
 	#endif
-	{
-		vector<string> s = {"a", "b" ,"c" ,"d"};
-		segment_tree<string, operation::concat<string> > tree(s.begin(),s.end());
-		cout<< "The segment_tree:"<<"\n";
-		tree.display();
-		cout<< "Performing Query Operation:" <<"\n";
-		for(int i=0;i<s.size();++i)
-		{
-			cout << "Query from index 0 till " << i <<": ";
-			cout<<tree.query(0,i)<<"\n";
-		}
-		tree.assignRange(1,3,"e");
-		cout << "The current state of the tree:" << "\n";
-		tree.display_WU();
-		cout<< "After Propogating the updates/assign" << "\n";
-		tree.display();
-		tree.updateRange(0,2,"f");
-		cout << "The current state of the tree:" << "\n";
-		tree.display_WU();
-		cout<< "After Propogating the updates/assign" << "\n";
-		tree.display();
-		cout<< "Performing Query Operation:" <<"\n";
-		for(int i=0;i<s.size();++i)
-		{
-			cout << "Query from index 0 till " << i <<": ";
-			cout<<tree.query(0,i)<<"\n";
-		}
-	}
 	return 0;	
 }
