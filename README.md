@@ -1,81 +1,109 @@
 # Segment Tree
 
 ## Introduction
-Segment tree is a data structure used to perform range queries on a contiguous sequence of elements. 
-In addition, it allows us to modify the sequence by performing an operation over a single element or a range of elements.
-The queries and updates are done efficiently in O(log n) time and the tree requires a linear amount of memory.
+Segment tree is a data structure used to perform range queries on a contiguous sequence of elements. It also allows us to modify the sequence by performing an operation over a single element or a range of elements. The queries and updates are done efficiently in O(log n) time and the tree requires a linear amount of memory.
 
-## Usage
+## Operations supported
+1. Sum
+2. Minimum
+3. Maximum
 
-### Range Query
-```diff -
-T query_util(int start,int end,int query_start, int query_end,int np);
+## Functions supported
+
+### Query on a segment
+```cpp
+iterator query(int query_left, int query_right);
+``` 
+Finds the minimum or maximum element within the given range. Returns an iterator to the element in the case of minimum or maximum operation. Returns the value in the case of sum operation.
+```cpp
+vector<int> a = {2, 3, 1, 6, 5};
+
+segment_tree<int, operation::min<int> > tree1(a.begin(), a.end());
+segment_tree<int, operation::min<int> >::iterator it = tree1.query(0,3);
+
+segment_tree<int, operation::sum<int> > tree2(a.begin(), a.end());
+int sum = tree2.query(0,3);
 ```
-Retrieves the value from the node which completely covers the input range. 
-
-### Range Update
-```
-void update_util(int start,int end,int index,int value, int np);
+### Update
+```cpp
+void update(int index, int value);
 ```
 Updates the value and the specified index and recomputes the value of the nodes along the path to the index.
+```cpp
+vector<int> a = {2, 3, 1, 6, 5};
 
-### Lazy update
+segment_tree<int, operation::min<int> > tree(a.begin(), a.end());
+tree.update(2,15);
 ```
-void updateRange_util(int start,int end,int query_start,int query_end,int value,int np);
+
+### Update on a segment
+```cpp
+void update(int query_left, int query_right, int value);
 ```
-Since a single value update in an array may cause multiple updates in Segment Tree as there may be many segment tree nodes 
-that have a single array element in their ranges.To overcome the same we can make use of lazy updates,
-In which updates are postponed (avoid recursive calls in update) and do those updates only when required.
+Assigns the given value to the given range of indices. Implements lazy update, in which updates are postponed and done only when required.
+```cpp
+vector<int> a = {2, 3, 1, 6, 5};
 
-### Lazy assignment
+segment_tree<int, operation::min<int> > tree(a.begin(), a.end());
+tree.update(2,4,15);
 ```
-void assignRange_util(int start,int end,int query_start,int query_end,int value,int np);
+
+### Addition on a segment 
+```cpp
+void add(int query_start,int query_end,int value);
+``` 
+Adds the given value to the given range of indices. Addition is done on the node which covers the entire segment. Atmost 2 nodes are modified.
+```cpp
+vector<int> a = {2, 3, 1, 6, 5};
+
+segment_tree<int, operation::max<int> > tree(a.begin(), a.end());
+tree.add(2,4,10);
 ```
-Lazy assignment works with the same logic as lazy update. Except, instead of incrementing value as done 
-in lazy update the value will be assigned (Replaced by the value). 
 
-
-## Iterator
-Segment tree is a data structure which is used to do some of the range query/update operations on some set of elements.
-So it has to be a data structure and it has to work with other generic algorithms also.
-Therefore we have implemented the iterator to give the abstraction from the container. 
- Iterator class is inheriting from the bidirectional iterator.
-
-It contains 2 fields: 
-#### pointer to the segment tree
-Pointer to the tree is used to access the elements.
-#### index 
-Index is used to get the updated value of the element at the given index. 
-
-## Segment tree works with generic algorithms
+## Iterators with C++ STL algorithms
+Our implementation of segment tree works with standard C++ STL algorithms as well. Some examples include: 
 
 #### lower bound
-```
+```cpp
 vector<int> b = {1,2,2,3,6};
-segment_tree<int, operation::sum<int>> tree(b.begin(),b.end());
-segment_tree<int, operation::sum<int> >::iterator it=lower_bound(tree.begin(),tree.end(),2);
+segment_tree<int, operation::sum<int> > tree(b.begin(), b.end());
+segment_tree<int, operation::sum<int> >::iterator it = lower_bound(tree.begin(), tree.end(), 2);
 ```
 
 #### find
-```
+```cpp
 vector<int> b = {1,2,2,3,6};
-segment_tree<int, operation::sum<int>> tree(b.begin(),b.end());
-segment_tree<int, operation::sum<int> >::iterator it=find(tree2.begin(), tree2.end(),2) - tree2.begin());
+segment_tree<int, operation::sum<int> > tree(b.begin(), b.end());
+segment_tree<int, operation::sum<int> >::iterator it = find(tree.begin(), tree.end(), 2);
 ```
 
 #### equal_range
-```
+```cpp
 vector<int> b = {1,2,2,3,6};
-segment_tree<int, operation::sum<int>> tree(b.begin(),b.end());
-typedef segment_tree<int, operation::sum<int> >::iterator stType;
-pair<stType,stType> p =  equal_range(tree2.begin(), tree2.end(),2);
-cout << p.first - tree2.begin() <<" " << p.second -  tree2.begin()<<"\n";
+segment_tree<int, operation::sum<int> > tree(b.begin(), b.end());
+typedef segment_tree<int, operation::sum<int> >::iterator seg_tree_iter;
+pair<seg_tree_iter, seg_tree_iter> p =  equal_range(tree.begin(), tree.end(), 2);
 ```
 
 #### find_if
-```
+```cpp
 vector<int> b = {1,2,2,3,6};
-segment_tree<int, operation::sum<int>> tree(b.begin(),b.end());
-cout << "Find if, even number found at: ";
-cout << find_if(tree2.begin(), tree2.end(),[](int x){return x%2 == 0;}) - tree2.begin()<< "\n";
+segment_tree<int, operation::sum<int> > tree(b.begin(), b.end());
+segment_tree<int, operation::sum<int> >::iterator it = find_if(tree.begin(), tree.end(), [](int x){return x%2 == 0;});
 ```
+
+## Performance
+Comparison of time taken to find the sum on segments of different sizes.
+```
+| Range        | Linear Datastructure | Segment Tree   |
+|--------------|----------------------|----------------|
+| [6,28]       | 1 microseconds       | 2 microseconds |
+| [414,959]    | 3 microseconds       | 2 microseconds |
+| [1705,8412]  | 36 microseconds      | 2 microseconds |
+| [1196,36532] | 198 microseconds     | 4 microseconds |
+```
+
+## References
+* https://www.cplusplus.com/doc/oldtutorial/templates/
+* https://cp-algorithms.com/data_structures/segment_tree.html
+* https://codeforces.com/edu/course/2/lesson/4/1
