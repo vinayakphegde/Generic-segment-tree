@@ -1,146 +1,74 @@
 #include <iostream>
-#include <bits/stdc++.h>
+#include <vector>
+#include <algorithm>
 using namespace std;
 
 #include "segment_tree.hpp"
 
 int main()
 {
-	#if 1
-	vector<int> a = {2,3,1,6};
-	{
-		cout<<"\n"<<"SUM: "<<"\n";
-		cout << "\n";
-		segment_tree<int, operation::sum<int> > tree(a.begin(),a.end());
-		cout<< "The segment_tree:"<<"\n";
-		tree.display();
-		cout<< "Performing Query Operation:" <<"\n";
-		for(int i=0;i<a.size();++i)
-		{
-			cout << "Query from index 0 till " << i <<": ";
-			cout<<tree.query(0,i)<<"\n";
-		}
-		cout << "\n";
-		cout<< "Performing Lazy assign Operation from index 1 to 3:" <<"\n";
-		tree.update(1,3,10);
-		cout<< "Performing Query Operation:" <<"\n";
-		for(int i=0;i<a.size();++i)
-		{
-			cout << "Query from index 0 till " << i <<": ";
-			cout<<tree.query(0,i)<<"\n";
-		}
-		cout << "\n";
-		cout<< "Performing lazy update operation from index 0 to 2:" <<"\n";
-		tree.add(0,2,100);
-		cout<< "Performing Query Operation:" <<"\n";
-		for(int i=0;i<a.size();++i)
-		{
-			cout << "Query from index 0 till " << i <<": ";
-			cout<<tree.query(0,i)<<"\n";
-		}
-		cout << "\n";
-		cout << "Performing lazy assign and update operation one after another:\n";
-		tree.update(1,3,10);
-		tree.add(0,2,100);
-		cout<< "Performing Query Operation:" <<"\n";
-		for(int i=0;i<a.size();++i)
-		{
-			cout << "Query from index 0 till " << i <<": ";
-			cout<<tree.query(0,i)<<"\n";
-		}
-		cout << "\n";
-		cout << "\n";
-	}
-	{
-		cout<<"\n"<<"MIN: "<<"\n";
-		segment_tree<int, operation::min<int>> tree2(a.begin(),a.end());
-		cout<< "The segment_tree:"<<"\n";
-		tree2.display();
-		for(int i=0;i<a.size();++i)
-		{
-			cout << "Query from index 0 till " << i <<": ";
-			segment_tree<int, operation::min<int> >::iterator it = tree2.query(0,i);
-			cout<<*it<<"\n";
-		}
-		cout << "\n";
-		cout<< "Performing Lazy assign Operation from index 1 to 3:" <<"\n";
-		tree2.update(1,3,10);
-		cout<< "Performing Query Operation:" <<"\n";
-		for(int i=0;i<a.size();++i)
-		{
-			cout << "Query from index 0 till " << i <<": ";
-			segment_tree<int, operation::min<int> >::iterator it = tree2.query(0,i);
-			cout<<*it<<"\n";
-		}
-		cout << "\n";
-		cout<< "Performing lazy update operation from index 0 to 2:" <<"\n";
-		tree2.add(0,2,100);
-		cout<< "Performing Query Operation:" <<"\n";
-		for(int i=0;i<a.size();++i)
-		{
-			cout << "Query from index 0 till " << i <<": ";
-			segment_tree<int, operation::min<int> >::iterator it = tree2.query(0,i);
-			cout<<*it<<"\n";
-		}
-		cout << "\n";
-		cout << "Performing lazy assign and update operation one after another:\n";
-		tree2.update(1,3,10);
-		tree2.add(0,2,100);
-		cout<< "Performing Query Operation:" <<"\n";
-		for(int i=0;i<a.size();++i)
-		{
-			cout << "Query from index 0 till " << i <<": ";
-			segment_tree<int, operation::min<int> >::iterator it = tree2.query(0,i);
-			cout<<*it<<"\n";
-		}
-		cout << "\n";
-		cout << "\n";
-	}
-	{
-		cout<<"\n"<<"MAX: "<<"\n";
-		segment_tree<int, operation::max<int>> tree2(a.begin(),a.end());
-		cout<< "The segment_tree:"<<"\n";
-		tree2.display();
-		for(int i=0;i<a.size();++i)
-		{
-			cout << "Query from index 0 till " << i <<": ";
-			segment_tree<int, operation::max<int> >::iterator it = tree2.query(0,i);
-			cout<<*it<<"\n";
-		}
-		cout << "\n";
-		cout<< "Performing Lazy assign Operation from index 1 to 3:" <<"\n";
-		tree2.update(1,3,10);
-		cout<< "Performing Query Operation:" <<"\n";
-		for(int i=0;i<a.size();++i)
-		{
-			cout << "Query from index 0 till " << i <<": ";
-			segment_tree<int, operation::max<int> >::iterator it = tree2.query(0,i);
-			cout<<*it<<"\n";
-		}
-		cout << "\n";
-		cout<< "Performing lazy update operation from index 0 to 2:" <<"\n";
-		tree2.add(0,2,100);
-		cout<< "Performing Query Operation:" <<"\n";
-		for(int i=0;i<a.size();++i)
-		{
-			cout << "Query from index 0 till " << i <<": ";
-			segment_tree<int, operation::max<int> >::iterator it = tree2.query(0,i);
-			cout<<*it<<"\n";
-		}
-		cout << "\n";
-		cout << "Performing lazy assign and update operation one after another:\n";
-		tree2.update(1,3,10);
-		tree2.add(0,2,100);
-		cout<< "Performing Query Operation:" <<"\n";
-		for(int i=0;i<a.size();++i)
-		{
-			cout << "Query from index 0 till " << i <<": ";
-			segment_tree<int, operation::max<int> >::iterator it = tree2.query(0,i);
-			cout<<*it<<"\n";
-		}
-		cout << "\n";
-		cout << "\n";
-	}
-	#endif
-	return 0;	
+    {
+        vector<int> a = {2, 3, 1, 6, 5};
+
+        segment_tree<int, operation::min<int> > tree1(a.begin(), a.end());
+        segment_tree<int, operation::min<int> >::iterator it = tree1.query(0,3);
+
+        segment_tree<int, operation::sum<int> > tree2(a.begin(), a.end());
+        int sum = tree2.query(0,3);
+
+        cout<<sum<<"\n";
+    }
+    {
+        vector<int> a = {2, 3, 1, 6, 5};
+
+        segment_tree<int, operation::min<int> > tree(a.begin(), a.end());
+        tree.update(2,15);
+
+        tree.display();
+    }
+    {
+        vector<int> a = {2, 3, 1, 6, 5};
+
+        segment_tree<int, operation::min<int> > tree(a.begin(), a.end());
+        tree.update(2,4,15);
+
+        tree.display();
+    }
+    {
+        vector<int> a = {2, 3, 1, 6, 5};
+
+        segment_tree<int, operation::max<int> > tree(a.begin(), a.end());
+        tree.add(2,4,10);
+
+        tree.display();
+    }
+    {
+        vector<int> b = {1,2,2,3,6};
+        segment_tree<int, operation::sum<int> > tree(b.begin(), b.end());
+        segment_tree<int, operation::sum<int> >::iterator it = lower_bound(tree.begin(), tree.end(), 2);
+
+        cout<<*it<<"\n";
+    }
+    {
+        vector<int> b = {1,2,2,3,6};
+        segment_tree<int, operation::sum<int> > tree(b.begin(), b.end());
+        segment_tree<int, operation::sum<int> >::iterator it = find(tree.begin(), tree.end(), 2);
+
+        cout<<*it<<"\n";
+    }
+    {
+        vector<int> b = {1,2,2,3,6};
+        segment_tree<int, operation::sum<int> > tree(b.begin(), b.end());
+        typedef segment_tree<int, operation::sum<int> >::iterator seg_tree_iter;
+        pair<seg_tree_iter, seg_tree_iter> p =  equal_range(tree.begin(), tree.end(), 2);
+
+        cout<<*p.first<<" "<<*p.second<<"\n";
+    }
+    {
+        vector<int> b = {1,2,2,3,6};
+        segment_tree<int, operation::sum<int> > tree(b.begin(), b.end());
+        segment_tree<int, operation::sum<int> >::iterator it = find_if(tree.begin(), tree.end(), [](int x){return x%2 == 0;});
+
+        cout<<*it<<"\n";
+    }
 }
